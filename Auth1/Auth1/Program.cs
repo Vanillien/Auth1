@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Auth1.Classes;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,16 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var tokenValidationParameters = new TokenValidationParameters()
+{
+    ValidateIssuer = true,
+    ValidateLifetime = true,
+    ValidateAudience = true,
+    ValidIssuer =  builder.Configuration["Issuer"],
+    ValidAudience = builder.Configuration["Audience"], 
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Secret"] ?? throw new Exception("Нету секрета в конфиге")))
+};
 
 builder.Configuration.AddJsonFile("appsettings.json");
 
@@ -53,15 +64,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateLifetime = true,
-            ValidateAudience = true,
-            ValidIssuer =  builder.Configuration["Issuer"],
-            ValidAudience = builder.Configuration["Audience"], 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Secret"] ?? throw new Exception("Нету секрета в конфиге")))
-        };
+        options.TokenValidationParameters = tokenValidationParameters;
     });
 
 builder.Services.AddDbContextFactory<AuthDbContext>(optionsBuilder =>
@@ -80,6 +83,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+var tokenHandler = new JwtSecurityTokenHandler();
+
+app.Map("/auth", (HttpContext context) =>
+{
+
+    var token = context.Request.Headers["Authorization"].ToString();
+    tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken); //херню делаешь. Тебе нужно просто проверить, выписан ли этот токен тобой.
+    
+    //тут мне надо сделать валидацию токена
+});
+    
 app.MapControllers();
 app.UseHttpsRedirection();
 

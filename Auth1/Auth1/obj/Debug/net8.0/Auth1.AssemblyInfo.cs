@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Auth1")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49dba46e94b1a254852d0890612a04adc2675cb4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Auth1")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Auth1")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
